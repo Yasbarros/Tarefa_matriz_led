@@ -73,6 +73,40 @@ void mostraImagemAleatoria() {
     atualizaFita();
 }
 
+
+// Função para definir o estado dos LEDs - Animação
+static void setLEDS(uint32_t* estado) {
+    memcpy(fitaEd, estado, sizeof(fitaEd));
+    atualizaFita();
+}
+
+/// Animação da cobra
+void animacaoCobraExplosiva() {
+    uint32_t cobra_corpo = urgb_u32(0, 255, 0);  // Verde
+    uint32_t cobra_cabeca = urgb_u32(255, 0, 0); // Vermelho
+
+    // Frames para o movimento da cobra
+    for (int i = 0; i < NLEDS; i++) {
+        memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
+        fitaEd[i] = cobra_cabeca; // Cabeça da cobra
+        for (int j = 1; j <= i && j < 5; j++) {
+            fitaEd[i - j] = cobra_corpo; // Corpo da cobra, com limite de 5 segmentos
+        }
+        atualizaFita();
+        sleep_ms(200); // Tempo entre movimentos
+    }
+
+    // Explosão ao atingir o último LED
+    for (int i = 0; i < 5; i++) { // Pisca aleatoriamente 5 vezes
+        uint32_t explosao_cor = urgb_u32(rand() % 256, rand() % 256, rand() % 256); // Cores aleatórias
+        for (int j = 0; j < NLEDS; j++) {
+            fitaEd[j] = (i % 2 == 0) ? explosao_cor : 0; // Alterna entre a cor aleatória e apagado
+        }
+        atualizaFita();
+        sleep_ms(200); // Intervalo entre piscadas
+    }
+}
+
 // Função para gerar um sinal sonoro
 void emiteSom(uint32_t duracao_ms, uint32_t frequencia_hz) {
     uint32_t periodo = 1000000 / frequencia_hz;  // Calcula o período do sinal (em microssegundos)
@@ -161,8 +195,10 @@ int main() {
                     mostraImagemAleatoria();
                     emiteSom(500, 1000);  // Emite som de 500ms com 1000Hz
                     break;
-                // Para as teclas de '1' a '9', mostra imagem aleatória
+                // Para as teclas de '0' a '9', mostra imagem 
                 case '1':
+                animacaoCobraExplosiva();
+                 break;
                 case '2':
                 case '3':
                 case '4':
