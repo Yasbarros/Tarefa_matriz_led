@@ -107,6 +107,78 @@ void animacaoCobraExplosiva() {
     }
 }
 
+void animacaoFlorCrescendo() {
+    uint32_t caule_cor = urgb_u32(0, 255, 0);   // Verde (caule)
+    uint32_t flor_cor = urgb_u32(255, 0, 255); // Rosa (flor - pétalas)
+    uint32_t centro_flor_cor = urgb_u32(255, 0, 255); // Lilas (centro da flor)
+    uint32_t folha_cor = urgb_u32(0, 128, 0); // Verde escuro (folha)
+    uint32_t abelha_cor = urgb_u32(255, 165, 0); // Laranja (abelha)
+
+    memset(fitaEd, 0, sizeof(fitaEd));
+
+    // Crescimento do caule (3 de altura)
+    for (int linha = 0; linha < 3; linha++) { // Cresce de baixo para cima (invertido)
+        fitaEd[linha * 5 + 2] = caule_cor; // Define o caule na coluna central (coluna 2)
+        atualizaFita();
+        sleep_ms(200); // Tempo entre "crescimentos"
+    }
+
+    // Crescimento de uma folha na lateral
+    fitaEd[1 * 5 + 1] = folha_cor; // Folha na esquerda
+    atualizaFita();
+    sleep_ms(200);
+
+    // Animação da flor abrindo na parte superior
+    for (int ciclo = 0; ciclo < 3; ciclo++) { // Pisca 3 vezes para simular abertura
+        fitaEd[3 * 5 + 1] = flor_cor; // Pétala esquerda
+        fitaEd[3 * 5 + 2] = centro_flor_cor; // Centro da flor
+        fitaEd[3 * 5 + 3] = flor_cor; // Pétala direita
+
+        fitaEd[4 * 5 + 2] = flor_cor; // Pétala superior (diagonal superior)
+
+        atualizaFita();
+        sleep_ms(300); // Pausa para o "brilho"
+
+        // Apaga a flor momentaneamente
+        fitaEd[3 * 5 + 1] = 0;
+        fitaEd[3 * 5 + 2] = 0;
+        fitaEd[3 * 5 + 3] = 0;
+        fitaEd[4 * 5 + 2] = 0;
+        atualizaFita();
+        sleep_ms(300);
+    }
+
+    // Mantém a flor acesa ao final
+    fitaEd[3 * 5 + 1] = flor_cor; // Pétala esquerda
+    fitaEd[3 * 5 + 2] = centro_flor_cor; // Centro da flor
+    fitaEd[3 * 5 + 3] = flor_cor; // Pétala direita
+    fitaEd[4 * 5 + 2] = flor_cor; // Pétala superior (diagonal superior)
+    atualizaFita();
+
+    // Animação da abelha chegando e pousando
+    for (int linha = 0; linha < 5; linha++) { // Abelhas voam verticalmente até o centro
+        fitaEd[linha * 5 + 0] = abelha_cor; // Abelha na primeira coluna
+        atualizaFita();
+        sleep_ms(700);
+        fitaEd[linha * 5 + 0] = 0; // Apaga a posição anterior
+    }
+
+    // Abelha pousa no centro da flor
+    fitaEd[3 * 5 + 2] = abelha_cor;
+    atualizaFita();
+    sleep_ms(2000);
+    fitaEd[3 * 5 + 2] = centro_flor_cor;
+    atualizaFita();
+
+    // Abelha voa para fora
+    for (int linha = 4; linha >= 0; linha--) {
+        fitaEd[linha * 5 + 4] = abelha_cor; // Abelha na última coluna
+        atualizaFita();
+        sleep_ms(800);
+        fitaEd[linha * 5 + 4] = 0; // Apaga a posição anterior
+    }
+}
+
 // Função para gerar um sinal sonoro
 void emiteSom(uint32_t duracao_ms, uint32_t frequencia_hz) {
     uint32_t periodo = 1000000 / frequencia_hz;  // Calcula o período do sinal (em microssegundos)
@@ -197,10 +269,12 @@ int main() {
                     break;
                 // Para as teclas de '0' a '9', mostra imagem 
                 case '1':
-                animacaoCobraExplosiva();
-                 break;
+                    animacaoCobraExplosiva();
+                    break;
                 case '2':
                 case '3':
+                    animacaoFlorCrescendo();
+                    break;
                 case '4':
                 case '5':
                 case '6':
