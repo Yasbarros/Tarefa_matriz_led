@@ -258,6 +258,44 @@ void animacaoFlorCrescendo() {
     }
 }
 
+// Animação do peixe
+void peixe() {
+    uint32_t cor = urgb_u32(62, 125, 255); // Azul claro
+    const uint8_t frames[][15] = {
+        {14},                              // Quadro 0
+        {5, 13, 14, 15},                  // Quadro 1
+        {4, 5, 6, 12, 13, 14, 15, 16, 24},// Quadro 2
+        {3, 5, 6, 7, 11, 12, 13, 14, 15, 16, 17, 23}, // Quadro 3
+        {2, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 22}, // Quadro 4
+        {1, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 21}, // Quadro 5
+        {0, 6, 8, 9, 10, 11, 12, 13, 16, 18, 19, 20}, // Quadro 6
+        {7, 9, 10, 11, 12, 17, 19},        // Quadro 7
+        {8, 10, 11, 18},                   // Quadro 8
+        {9, 10, 19},                       // Quadro 9
+        {}                                 // Quadro 10 (todos apagados)
+    };
+    
+    const size_t frame_sizes[] = {
+        1, 4, 9, 12, 14, 15, 12, 7, 4, 3, 0
+    };
+
+    for (int i = 0; i <= 10; i++) {
+        
+        // Limpa a fita antes de cada quadro
+        memset(fitaEd, 0, sizeof(fitaEd));
+
+        // Ativa os LEDs especificados para o quadro atual
+        for (size_t j = 0; j < frame_sizes[i]; j++) {
+            fitaEd[frames[i][j]] = cor;
+        }
+
+        // Atualiza a fita e aguarda
+        atualizaFita();
+        sleep_ms(200);
+    }
+}
+
+
 // Função para gerar um sinal sonoro
 void emiteSom(uint32_t duracao_ms, uint32_t frequencia_hz) {
     uint32_t periodo = 1000000 / frequencia_hz;  // Calcula o período do sinal (em microssegundos)
@@ -417,6 +455,8 @@ int main() {
                     fillAnimation();
                     break;
                 case '6':
+                peixe();
+                break;
                 case '7':
                 case '8':
                 case '9':
