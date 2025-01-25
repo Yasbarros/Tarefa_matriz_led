@@ -79,6 +79,50 @@ static void setLEDS(uint32_t* estado) {
     memcpy(fitaEd, estado, sizeof(fitaEd));
     atualizaFita();
 }
+void animacaochuva() {
+    // Cor do LED central (vermelho)
+    uint32_t cor_centro = urgb_u32(0, 0, 0); 
+    
+    // Cor dos LEDs giratórios
+    uint32_t cor_giratoria = urgb_u32(0, 0, 255); // Azul
+
+    // LEDs apagados
+    uint32_t cor_apagada = urgb_u32(0, 0, 0);
+
+    // LEDs ao redor do centro, organizados em ordem de "rotação"
+    const int leds_chuva[16] = {
+        6, 7, 8, 13, 18, 23, 22, 21, 20, 15, 10, 5, 4, 3, 2, 9
+    };
+
+    // Número total de LEDs giratórios
+    int num_giratorios = 16;
+
+    // Número de quadros para completar uma rotação
+    int frames_por_rotacao = num_giratorios;
+
+    // Início da animação
+    for (int frame = 0; frame < frames_por_rotacao * 3; frame++) {
+        // Limpa todos os LEDs
+        memset(fitaEd, 0, sizeof(fitaEd));
+
+        // Acende o LED central
+        fitaEd[12] = cor_centro;
+
+        // Define a posição dos LEDs giratórios
+        for (int i = 0; i < 4; i++) {
+            int indice_led = (frame + i * (num_giratorios / 4)) % num_giratorios;
+            fitaEd[leds_chuva[indice_led]] = cor_giratoria;
+        }
+
+        // Atualiza os LEDs para exibir o quadro atual
+        atualizaFita();
+        sleep_ms(200); // Tempo entre os frames
+    }
+
+    // Apaga todos os LEDs ao final da animação
+    apagaLEDS();
+}
+
 
 /// Animação da cobra
 void animacaoCobraExplosiva() {
@@ -323,10 +367,11 @@ int main() {
                     break;
                 // Para as teclas de '0' a '9', mostra imagem 
                 case '1':
-                    animacaoCobraExplosiva();
-                    break;
+                   animacaoCobraExplosiva();
+                   break;
                 case '2':
-                    break;
+                   animacaochuva();
+                   break;
                 case '3':
                     animacaoFlorCrescendo();
                     break;
