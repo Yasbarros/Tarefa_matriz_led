@@ -537,10 +537,10 @@ int main() {
                     sleep_ms(100);
                     reset_usb_boot(0, 0);  // Reinicia no modo bootloader
                     break;
-                case '0':  // Exemplo de som para animação
+                // Para as teclas de '0' a '9', mostra imagem 
+                case '0':
                     contagem_regressiva();
                     break;
-                // Para as teclas de '0' a '9', mostra imagem 
                 case '1':
                    animacaoCobraExplosiva();
                    break;
