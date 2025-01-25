@@ -295,6 +295,46 @@ void peixe() {
     }
 }
 
+/// Animação mario
+void animacaoMario() {
+    uint32_t color = urgb_u32(255, 0, 0);
+    int salto;
+    
+    memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
+    for (int i = 1; i < NLEDS; ) {
+        salto = 0;
+        fitaEd[i] = color; // Cabeça da cobra
+        if(i%2){
+            salto++;
+            fitaEd[i + salto] = color; // Cabeça da cobra
+        }else{
+            salto++;
+        }
+        salto++;
+        fitaEd[i + salto] = color; // Cabeça da cobra
+        i += 5;
+        atualizaFita();
+        sleep_ms(200); // Tempo entre movimentos
+    }
+    sleep_ms(500);
+    memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
+
+    for (int i = 0; i < NLEDS; i++){
+        if (i<5){
+            if(i==2) continue;
+            fitaEd[i] = urgb_u32(156, 90, 60);
+        }else if(i < 11 || i == 13 ){
+            fitaEd[i] = urgb_u32(0, 0, 200);
+        }else if(i > 15 && i < 20){
+            fitaEd[i] = urgb_u32(211, 178, 153);
+        }else{
+            fitaEd[i] = urgb_u32(200, 0, 0);
+        }
+        atualizaFita();
+        sleep_ms(300);
+    }
+}
+
 
 // Função para gerar um sinal sonoro
 void emiteSom(uint32_t duracao_ms, uint32_t frequencia_hz) {
@@ -459,6 +499,8 @@ int main() {
                 break;
                 case '7':
                 case '8':
+                    animacaoMario();
+                    break;
                 case '9':
                     mostraImagemAleatoria();  // Mostra imagem aleatória
                     break;
