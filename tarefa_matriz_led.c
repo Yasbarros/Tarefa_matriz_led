@@ -192,6 +192,60 @@ void emiteSom(uint32_t duracao_ms, uint32_t frequencia_hz) {
     }
 }
 
+// Animação de preenchimento
+void fillAnimation() {
+    uint32_t led = urgb_u32(255, 255, 0); // Cor amarela para o LED "caindo"
+
+    // Mapeamento a ser seguido na animação
+    uint32_t columns[5][5] = {
+        {24, 23, 22, 21, 20},
+        {15, 16, 17, 18, 19},
+        {14, 13, 12, 11, 10},
+        {5,  6,  7,  8,  9},
+        {4,  3,  2,  1,  0}
+    };
+
+    memset(fitaEd, 0, sizeof(fitaEd)); 
+    
+    for (int row = 4; row >= 0; row--) {
+        for (int col = 0; col < 5; col++) {
+            uint32_t index = columns[row][col];
+
+            // Desenha o rastro "caindo"
+            for (int fall = 0; fall <= row; fall++) {
+                uint32_t fallIndex = columns[fall][col];
+
+                // Gradiente: vermelho - amarelo
+                uint8_t green = 255 - ((255 / 4) * row);
+                led = urgb_u32(255, green, 0);
+
+                fitaEd[fallIndex] = led; 
+                atualizaFita();
+                sleep_ms(100);
+                fitaEd[fallIndex] = urgb_u32(0, 0, 0);
+            }
+
+            // Mantém o LED aceso na linha atual
+            fitaEd[index] = led;
+            atualizaFita();
+            sleep_ms(200); 
+        }
+    }
+
+    // Muda a cor do led pra verde
+    for(int i = 0; i < NLEDS; i++){
+        fitaEd[i] = urgb_u32(0, 128, 0);
+    }
+
+    // Emite um som ao final da animação
+    atualizaFita();
+    emiteSom(300, 150);
+
+    // Espera um tempo de 0.6s antes de apagar os leds
+    sleep_ms(600);
+    memset(fitaEd, 0, sizeof(fitaEd)); 
+}
+
 // Inicializa os pinos da matriz de teclado
 void init_gpio() {
     for (int i = 0; i < ROWS; i++) {
@@ -272,11 +326,15 @@ int main() {
                     animacaoCobraExplosiva();
                     break;
                 case '2':
+                    break;
                 case '3':
                     animacaoFlorCrescendo();
                     break;
                 case '4':
+                    break;
                 case '5':
+                    fillAnimation();
+                    break;
                 case '6':
                 case '7':
                 case '8':
