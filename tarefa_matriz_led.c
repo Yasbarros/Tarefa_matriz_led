@@ -108,137 +108,42 @@ void animacaoCobraExplosiva() {
 }
 
 // Animação do peixe
-void peixe (){
-    uint32_t cor = urgb_u32(62, 125, 255); //azul claro
+void peixe() {
+    uint32_t cor = urgb_u32(62, 125, 255); // Azul claro
+    const uint8_t frames[][15] = {
+        {14},                              // Quadro 0
+        {5, 13, 14, 15},                  // Quadro 1
+        {4, 5, 6, 12, 13, 14, 15, 16, 24},// Quadro 2
+        {3, 5, 6, 7, 11, 12, 13, 14, 15, 16, 17, 23}, // Quadro 3
+        {2, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 22}, // Quadro 4
+        {1, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 21}, // Quadro 5
+        {0, 6, 8, 9, 10, 11, 12, 13, 16, 18, 19, 20}, // Quadro 6
+        {7, 9, 10, 11, 12, 17, 19},        // Quadro 7
+        {8, 10, 11, 18},                   // Quadro 8
+        {9, 10, 19},                       // Quadro 9
+        {}                                 // Quadro 10 (todos apagados)
+    };
+    
+    const size_t frame_sizes[] = {
+        1, 4, 9, 12, 14, 15, 12, 7, 4, 3, 0
+    };
 
-    for(int i = 0; i <= 10; i++){
-        switch (i){
+    for (int i = 0; i <= 10; i++) {
+        
+        // Limpa a fita antes de cada quadro
+        memset(fitaEd, 0, sizeof(fitaEd));
 
-            case 0:
-            memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
-            fitaEd[14] = cor;
-            atualizaFita();
-            sleep_ms(200);
-            break;
-
-            case 1:
-            fitaEd[5] = cor;
-            for(int j = 13; j <= 15; j++){
-                fitaEd[j] = cor;
-            }
-            atualizaFita();
-            sleep_ms(200);
-            break;
-
-            case 2:
-            fitaEd[24] = cor;
-            for(int j = 4; j <= 6; j++){
-                fitaEd[j] = cor;
-            }
-            for(int j = 12; j <= 16; j++){
-                fitaEd[j] = cor;                
-            }
-            atualizaFita();
-            sleep_ms(200);
-            break;
-
-            case 3:
-            memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
-            fitaEd[3] = cor;
-            for(int j = 5; j <= 7; j++){
-                fitaEd[j] = cor;
-            }
-            for(int j = 11; j <= 17; j++){
-                fitaEd[j] = cor;                
-            }
-            fitaEd[23] = cor;
-            atualizaFita();
-            sleep_ms(200);
-            break;
-
-            case 4:
-            memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
-            fitaEd[2] = cor;
-            for(int j = 6; j <= 8; j++){
-                fitaEd[j] = cor;
-            }
-            for(int j = 10; j <= 18; j++){
-                fitaEd[j] = cor;                
-            }
-            fitaEd[22] = cor;
-            atualizaFita();
-            sleep_ms(200);
-            break;
-
-            case 5:
-            memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
-            fitaEd[1] = cor;
-            fitaEd[5] = cor;
-            for(int j = 7; j <= 15; j++){
-                fitaEd[j] = cor;
-            }
-            for(int j = 17; j <= 19; j++){
-                fitaEd[j] = cor;                
-            }
-            fitaEd[21] = cor;
-            atualizaFita();
-            sleep_ms(200);
-            break;
-
-            case 6:
-            memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
-            fitaEd[0] = cor;
-            fitaEd[6] = cor;
-            for(int j = 8; j <= 13; j++){
-                fitaEd[j] = cor;
-            }
-            for(int j = 18; j <= 20; j++){
-                fitaEd[j] = cor;                
-            }
-            fitaEd[16] = cor;
-            atualizaFita();
-            sleep_ms(200);
-            break;
-
-            case 7:
-            memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
-            fitaEd[7] = cor;
-            for(int j = 9; j <= 12; j++){
-                fitaEd[j] = cor;
-            }
-            fitaEd[17] = cor;
-            fitaEd[19] = cor;
-            atualizaFita();
-            sleep_ms(200);
-            break;
-
-            case 8:
-            memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
-            fitaEd[8] = cor;
-            fitaEd[10] = cor;
-            fitaEd[11] = cor;
-            fitaEd[18] = cor;
-            atualizaFita();
-            sleep_ms(200);
-            break;
-
-            case 9:
-            memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
-            fitaEd[9] = cor;
-            fitaEd[10] = cor;
-            fitaEd[19] = cor;
-            atualizaFita();
-            sleep_ms(200);
-            break;
-
-            case 10:
-            memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
-            atualizaFita();
-            sleep_ms(200);
-            break;
+        // Ativa os LEDs especificados para o quadro atual
+        for (size_t j = 0; j < frame_sizes[i]; j++) {
+            fitaEd[frames[i][j]] = cor;
         }
+
+        // Atualiza a fita e aguarda
+        atualizaFita();
+        sleep_ms(200);
     }
 }
+
 
 // Função para gerar um sinal sonoro
 void emiteSom(uint32_t duracao_ms, uint32_t frequencia_hz) {
