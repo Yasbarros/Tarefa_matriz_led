@@ -107,6 +107,139 @@ void animacaoCobraExplosiva() {
     }
 }
 
+// Animação do peixe
+void peixe (){
+    uint32_t cor = urgb_u32(62, 125, 255); //azul claro
+
+    for(int i = 0; i <= 10; i++){
+        switch (i){
+
+            case 0:
+            memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
+            fitaEd[14] = cor;
+            atualizaFita();
+            sleep_ms(200);
+            break;
+
+            case 1:
+            fitaEd[5] = cor;
+            for(int j = 13; j <= 15; j++){
+                fitaEd[j] = cor;
+            }
+            atualizaFita();
+            sleep_ms(200);
+            break;
+
+            case 2:
+            fitaEd[24] = cor;
+            for(int j = 4; j <= 6; j++){
+                fitaEd[j] = cor;
+            }
+            for(int j = 12; j <= 16; j++){
+                fitaEd[j] = cor;                
+            }
+            atualizaFita();
+            sleep_ms(200);
+            break;
+
+            case 3:
+            memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
+            fitaEd[3] = cor;
+            for(int j = 5; j <= 7; j++){
+                fitaEd[j] = cor;
+            }
+            for(int j = 11; j <= 17; j++){
+                fitaEd[j] = cor;                
+            }
+            fitaEd[23] = cor;
+            atualizaFita();
+            sleep_ms(200);
+            break;
+
+            case 4:
+            memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
+            fitaEd[2] = cor;
+            for(int j = 6; j <= 8; j++){
+                fitaEd[j] = cor;
+            }
+            for(int j = 10; j <= 18; j++){
+                fitaEd[j] = cor;                
+            }
+            fitaEd[22] = cor;
+            atualizaFita();
+            sleep_ms(200);
+            break;
+
+            case 5:
+            memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
+            fitaEd[1] = cor;
+            fitaEd[5] = cor;
+            for(int j = 7; j <= 15; j++){
+                fitaEd[j] = cor;
+            }
+            for(int j = 17; j <= 19; j++){
+                fitaEd[j] = cor;                
+            }
+            fitaEd[21] = cor;
+            atualizaFita();
+            sleep_ms(200);
+            break;
+
+            case 6:
+            memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
+            fitaEd[0] = cor;
+            fitaEd[6] = cor;
+            for(int j = 8; j <= 13; j++){
+                fitaEd[j] = cor;
+            }
+            for(int j = 18; j <= 20; j++){
+                fitaEd[j] = cor;                
+            }
+            fitaEd[16] = cor;
+            atualizaFita();
+            sleep_ms(200);
+            break;
+
+            case 7:
+            memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
+            fitaEd[7] = cor;
+            for(int j = 9; j <= 12; j++){
+                fitaEd[j] = cor;
+            }
+            fitaEd[17] = cor;
+            fitaEd[19] = cor;
+            atualizaFita();
+            sleep_ms(200);
+            break;
+
+            case 8:
+            memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
+            fitaEd[8] = cor;
+            fitaEd[10] = cor;
+            fitaEd[11] = cor;
+            fitaEd[18] = cor;
+            atualizaFita();
+            sleep_ms(200);
+            break;
+
+            case 9:
+            memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
+            fitaEd[9] = cor;
+            fitaEd[10] = cor;
+            fitaEd[19] = cor;
+            atualizaFita();
+            sleep_ms(200);
+            break;
+
+            case 10:
+            memset(fitaEd, 0, sizeof(fitaEd)); // Limpa os LEDs
+            atualizaFita();
+            sleep_ms(200);
+            break;
+        }
+    }
+}
+
 // Função para gerar um sinal sonoro
 void emiteSom(uint32_t duracao_ms, uint32_t frequencia_hz) {
     uint32_t periodo = 1000000 / frequencia_hz;  // Calcula o período do sinal (em microssegundos)
@@ -204,6 +337,8 @@ int main() {
                 case '4':
                 case '5':
                 case '6':
+                peixe();
+                break;
                 case '7':
                 case '8':
                 case '9':
