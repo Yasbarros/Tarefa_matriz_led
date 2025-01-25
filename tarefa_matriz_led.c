@@ -79,6 +79,50 @@ static void setLEDS(uint32_t* estado) {
     memcpy(fitaEd, estado, sizeof(fitaEd));
     atualizaFita();
 }
+void animacaochuva() {
+    // Cor do LED central (vermelho)
+    uint32_t cor_centro = urgb_u32(0, 0, 0); 
+    
+    // Cor dos LEDs giratórios
+    uint32_t cor_giratoria = urgb_u32(0, 0, 255); // Azul
+
+    // LEDs apagados
+    uint32_t cor_apagada = urgb_u32(0, 0, 0);
+
+    // LEDs ao redor do centro, organizados em ordem de "rotação"
+    const int leds_chuva[16] = {
+        6, 7, 8, 13, 18, 23, 22, 21, 20, 15, 10, 5, 4, 3, 2, 9
+    };
+
+    // Número total de LEDs giratórios
+    int num_giratorios = 16;
+
+    // Número de quadros para completar uma rotação
+    int frames_por_rotacao = num_giratorios;
+
+    // Início da animação
+    for (int frame = 0; frame < frames_por_rotacao * 3; frame++) {
+        // Limpa todos os LEDs
+        memset(fitaEd, 0, sizeof(fitaEd));
+
+        // Acende o LED central
+        fitaEd[12] = cor_centro;
+
+        // Define a posição dos LEDs giratórios
+        for (int i = 0; i < 4; i++) {
+            int indice_led = (frame + i * (num_giratorios / 4)) % num_giratorios;
+            fitaEd[leds_chuva[indice_led]] = cor_giratoria;
+        }
+
+        // Atualiza os LEDs para exibir o quadro atual
+        atualizaFita();
+        sleep_ms(200); // Tempo entre os frames
+    }
+
+    // Apaga todos os LEDs ao final da animação
+    apagaLEDS();
+}
+
 
 /// Animação da cobra
 void animacaoCobraExplosiva() {
@@ -142,6 +186,78 @@ void animacaoOndasCrescentes() {
     }
 }
 
+void animacaoFlorCrescendo() {
+    uint32_t caule_cor = urgb_u32(0, 255, 0);   // Verde (caule)
+    uint32_t flor_cor = urgb_u32(255, 0, 255); // Rosa (flor - pétalas)
+    uint32_t centro_flor_cor = urgb_u32(255, 0, 255); // Lilas (centro da flor)
+    uint32_t folha_cor = urgb_u32(0, 128, 0); // Verde escuro (folha)
+    uint32_t abelha_cor = urgb_u32(255, 165, 0); // Laranja (abelha)
+
+    memset(fitaEd, 0, sizeof(fitaEd));
+
+    // Crescimento do caule (3 de altura)
+    for (int linha = 0; linha < 3; linha++) { // Cresce de baixo para cima (invertido)
+        fitaEd[linha * 5 + 2] = caule_cor; // Define o caule na coluna central (coluna 2)
+        atualizaFita();
+        sleep_ms(200); // Tempo entre "crescimentos"
+    }
+
+    // Crescimento de uma folha na lateral
+    fitaEd[1 * 5 + 1] = folha_cor; // Folha na esquerda
+    atualizaFita();
+    sleep_ms(200);
+
+    // Animação da flor abrindo na parte superior
+    for (int ciclo = 0; ciclo < 3; ciclo++) { // Pisca 3 vezes para simular abertura
+        fitaEd[3 * 5 + 1] = flor_cor; // Pétala esquerda
+        fitaEd[3 * 5 + 2] = centro_flor_cor; // Centro da flor
+        fitaEd[3 * 5 + 3] = flor_cor; // Pétala direita
+
+        fitaEd[4 * 5 + 2] = flor_cor; // Pétala superior (diagonal superior)
+
+        atualizaFita();
+        sleep_ms(300); // Pausa para o "brilho"
+
+        // Apaga a flor momentaneamente
+        fitaEd[3 * 5 + 1] = 0;
+        fitaEd[3 * 5 + 2] = 0;
+        fitaEd[3 * 5 + 3] = 0;
+        fitaEd[4 * 5 + 2] = 0;
+        atualizaFita();
+        sleep_ms(300);
+    }
+
+    // Mantém a flor acesa ao final
+    fitaEd[3 * 5 + 1] = flor_cor; // Pétala esquerda
+    fitaEd[3 * 5 + 2] = centro_flor_cor; // Centro da flor
+    fitaEd[3 * 5 + 3] = flor_cor; // Pétala direita
+    fitaEd[4 * 5 + 2] = flor_cor; // Pétala superior (diagonal superior)
+    atualizaFita();
+
+    // Animação da abelha chegando e pousando
+    for (int linha = 0; linha < 5; linha++) { // Abelhas voam verticalmente até o centro
+        fitaEd[linha * 5 + 0] = abelha_cor; // Abelha na primeira coluna
+        atualizaFita();
+        sleep_ms(700);
+        fitaEd[linha * 5 + 0] = 0; // Apaga a posição anterior
+    }
+
+    // Abelha pousa no centro da flor
+    fitaEd[3 * 5 + 2] = abelha_cor;
+    atualizaFita();
+    sleep_ms(2000);
+    fitaEd[3 * 5 + 2] = centro_flor_cor;
+    atualizaFita();
+
+    // Abelha voa para fora
+    for (int linha = 4; linha >= 0; linha--) {
+        fitaEd[linha * 5 + 4] = abelha_cor; // Abelha na última coluna
+        atualizaFita();
+        sleep_ms(800);
+        fitaEd[linha * 5 + 4] = 0; // Apaga a posição anterior
+    }
+}
+
 // Função para gerar um sinal sonoro
 void emiteSom(uint32_t duracao_ms, uint32_t frequencia_hz) {
     uint32_t periodo = 1000000 / frequencia_hz;  // Calcula o período do sinal (em microssegundos)
@@ -153,6 +269,60 @@ void emiteSom(uint32_t duracao_ms, uint32_t frequencia_hz) {
         gpio_put(BUZZER_PIN, 0);  // Desativa o buzzer
         sleep_us(periodo / 2);    // Espera a outra metade do período
     }
+}
+
+// Animação de preenchimento
+void fillAnimation() {
+    uint32_t led = urgb_u32(255, 255, 0); // Cor amarela para o LED "caindo"
+
+    // Mapeamento a ser seguido na animação
+    uint32_t columns[5][5] = {
+        {24, 23, 22, 21, 20},
+        {15, 16, 17, 18, 19},
+        {14, 13, 12, 11, 10},
+        {5,  6,  7,  8,  9},
+        {4,  3,  2,  1,  0}
+    };
+
+    memset(fitaEd, 0, sizeof(fitaEd)); 
+    
+    for (int row = 4; row >= 0; row--) {
+        for (int col = 0; col < 5; col++) {
+            uint32_t index = columns[row][col];
+
+            // Desenha o rastro "caindo"
+            for (int fall = 0; fall <= row; fall++) {
+                uint32_t fallIndex = columns[fall][col];
+
+                // Gradiente: vermelho - amarelo
+                uint8_t green = 255 - ((255 / 4) * row);
+                led = urgb_u32(255, green, 0);
+
+                fitaEd[fallIndex] = led; 
+                atualizaFita();
+                sleep_ms(100);
+                fitaEd[fallIndex] = urgb_u32(0, 0, 0);
+            }
+
+            // Mantém o LED aceso na linha atual
+            fitaEd[index] = led;
+            atualizaFita();
+            sleep_ms(200); 
+        }
+    }
+
+    // Muda a cor do led pra verde
+    for(int i = 0; i < NLEDS; i++){
+        fitaEd[i] = urgb_u32(0, 128, 0);
+    }
+
+    // Emite um som ao final da animação
+    atualizaFita();
+    emiteSom(300, 150);
+
+    // Espera um tempo de 0.6s antes de apagar os leds
+    sleep_ms(600);
+    memset(fitaEd, 0, sizeof(fitaEd)); 
 }
 
 // Inicializa os pinos da matriz de teclado
@@ -232,14 +402,20 @@ int main() {
                     break;
                 // Para as teclas de '0' a '9', mostra imagem 
                 case '1':
-                animacaoCobraExplosiva();
-                 break;
+                   animacaoCobraExplosiva();
+                   break;
                 case '2':
+                   animacaochuva();
+                   break;
                 case '3':
+                    animacaoFlorCrescendo();
+                    break;
                 case '4':
                     animacaoOndasCrescentes();
                     break;
                 case '5':
+                    fillAnimation();
+                    break;
                 case '6':
                 case '7':
                 case '8':
