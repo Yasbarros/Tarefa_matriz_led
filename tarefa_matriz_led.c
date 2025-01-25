@@ -309,6 +309,30 @@ void emiteSom(uint32_t duracao_ms, uint32_t frequencia_hz) {
     }
 }
 
+/**
+ * Exibe um frame na fita de LEDs, aplicando uma cor a LEDs específicos.
+ *
+ * size = O número de LEDs a serem atualizados no frame.
+ * frame = Array contendo os índices dos LEDs a serem modificados.
+ * color = A cor que será aplicada aos LEDs especificados.
+ */
+void show_frame(uint8_t size, const uint8_t frame[], uint32_t color) {
+    // Zera o buffer da fita de LEDs, garantindo que LEDs não usados no frame fiquem apagados
+    memset(fitaEd, 0, sizeof(fitaEd));
+
+    // Atualiza o buffer com a cor nos índices especificados no frame
+    for (uint8_t i = 0; i < size; i++) {
+        fitaEd[frame[i]] = color;
+    }
+
+    // Envia os dados atualizados para a fita de LEDs
+    atualizaFita();
+
+    // Pausa por 200ms para permitir que o frame seja visível antes de avançar
+    sleep_ms(200);
+}
+
+
 // Animação de preenchimento
 void fillAnimation() {
     uint32_t led = urgb_u32(255, 255, 0); // Cor amarela para o LED "caindo"
