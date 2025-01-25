@@ -546,9 +546,11 @@ int main() {
                     fillAnimation();
                     break;
                 case '6':
-                peixe();
-                break;
+                    peixe();
+                    break;
                 case '7':
+                    loading();
+                    break;
                 case '8':
                 case '9':
                     mostraImagemAleatoria();  // Mostra imagem aleatória
