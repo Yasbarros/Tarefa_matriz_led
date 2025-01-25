@@ -150,6 +150,41 @@ void animacaoCobraExplosiva() {
         sleep_ms(200); // Intervalo entre piscadas
     }
 }
+// Animação "Ondas Crescentes"
+void animacaoOndasCrescentes() {
+    uint32_t cor_onda = urgb_u32(0, 0, 255); // Azul para as ondas
+    uint32_t cor_base = urgb_u32(0, 0, 0);   // LEDs apagados
+
+    // Cria a onda crescente
+    for (int onda = 1; onda <= HEIGHT; onda++) {
+        memset(fitaEd, 0, sizeof(fitaEd)); // Limpa todos os LEDs
+
+        // Acende os LEDs da onda atual
+        for (int i = 0; i < onda; i++) {
+            for (int j = 0; j < WIDTH; j++) {
+                fitaEd[i * WIDTH + j] = cor_onda; // Acende uma linha completa
+            }
+        }
+
+        atualizaFita();
+        sleep_ms(200); // Intervalo entre cada "crescimento" da onda
+    }
+
+    // Reverte a onda (desaparecendo)
+    for (int onda = HEIGHT; onda >= 1; onda--) {
+        memset(fitaEd, 0, sizeof(fitaEd)); // Limpa todos os LEDs
+
+        // Mantém as linhas até a altura atual
+        for (int i = 0; i < onda; i++) {
+            for (int j = 0; j < WIDTH; j++) {
+                fitaEd[i * WIDTH + j] = cor_onda; // Acende uma linha completa
+            }
+        }
+
+        atualizaFita();
+        sleep_ms(200); // Intervalo entre cada "diminuição" da onda
+    }
+}
 
 void animacaoFlorCrescendo() {
     uint32_t caule_cor = urgb_u32(0, 255, 0);   // Verde (caule)
@@ -376,6 +411,7 @@ int main() {
                     animacaoFlorCrescendo();
                     break;
                 case '4':
+                    animacaoOndasCrescentes();
                     break;
                 case '5':
                     fillAnimation();
