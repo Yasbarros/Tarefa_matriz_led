@@ -89,3 +89,5 @@ Este projeto implementa o controle de uma matriz de LEDs 5x5 utilizando o Raspbe
 
 - Certifique-se de que todas as conexões estejam corretas antes de alimentar o dispositivo.
 - Utilize um compilador compatível com o Raspberry Pi Pico para compilar e carregar o programa.
+
+[Clique aqui ⬆️ e assista o vídeo](https://www.youtube.com/watch?v=J8S0Z071hAA)
