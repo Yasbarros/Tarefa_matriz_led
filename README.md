@@ -51,9 +51,10 @@ Este projeto implementa o controle de uma matriz de LEDs 5x5 utilizando o Raspbe
    - `D`: Acender todos os LEDs na cor verde.
    - `#`: Acender todos os LEDs na cor branca.
    - `*`: Reiniciar o dispositivo no modo de gravação.
-   - `0`: Mostrar um padrão aleatório nos LEDs e emitir um som.
+   - `0`: Mostrar uma contagem regressiva de 5 segundos.
    - `1`: Mostrar uma cobra se moviventando até o ultimo led e explodindo.
    - `3`: Mostrar uma flor crescendo e uma abelha pousando nela.
+   - `7`: Mostrar uma tela de carregamento e emitir notas musicais.
    - `9`: Mostra os raios do Sol
 
 ## Configuração dos Pinos
