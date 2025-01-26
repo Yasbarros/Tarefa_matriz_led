@@ -309,6 +309,97 @@ void emiteSom(uint32_t duracao_ms, uint32_t frequencia_hz) {
     }
 }
 
+/**
+ * Exibe um frame na fita de LEDs, aplicando uma cor a LEDs específicos.
+ *
+ * size = O número de LEDs a serem atualizados no frame.
+ * frame = Array contendo os índices dos LEDs a serem modificados.
+ * color = A cor que será aplicada aos LEDs especificados.
+ */
+void show_frame(uint8_t size, const uint8_t frame[], uint32_t color) {
+    // Zera o buffer da fita de LEDs, garantindo que LEDs não usados no frame fiquem apagados
+    memset(fitaEd, 0, sizeof(fitaEd));
+
+    // Atualiza o buffer com a cor nos índices especificados no frame
+    for (uint8_t i = 0; i < size; i++) {
+        fitaEd[frame[i]] = color;
+    }
+
+    // Envia os dados atualizados para a fita de LEDs
+    atualizaFita();
+
+    // Pausa por 200ms para permitir que o frame seja visível antes de avançar
+    sleep_ms(200);
+}
+
+/**
+ * Função que exibe uma animação de carregamento, alterando os LEDs de uma fita
+ * e emitindo sons correspondentes a notas musicais baseadas no tamanho do frame.
+ */
+void loading() {
+    uint32_t white = urgb_u32(50, 50, 50); // Define uma cor branca de intensidade moderada para os LEDs
+
+    // Array de frames, onde cada frame contém os índices dos LEDs a serem iluminados
+    const uint8_t frames[][12] = {
+        {14}, // 1
+        {15, 23}, // 2
+        {23, 22, 21}, // 3
+        {22, 21, 19, 10}, // 4
+        {21, 19, 10, 9, 1}, // 5
+        {19, 10, 9, 1, 2, 3}, // 6
+        {10, 9, 1, 2, 3, 5, 14}, // 7
+        {9, 1, 2, 3, 5, 14, 15, 23}, // 8
+        {1, 2, 3, 5, 14, 15, 23, 22, 21}, // 9
+        {2, 3, 5, 14, 15, 23, 22, 21, 19, 10}, // 10
+        {3, 5, 14, 15, 23, 22, 21, 19, 10, 9, 1}, // 11
+        {5, 14, 15, 23, 22, 21, 19, 10, 9, 1, 2, 3}, // 12
+        {5, 14, 23, 22, 21, 19, 10, 9, 1, 2, 3}, // 13
+        {5, 14, 22, 21, 19, 10, 9, 1, 2, 3}, // 14
+        {5, 14, 21, 19, 10, 9, 1, 2, 3}, // 15
+        {5, 14, 19, 10, 9, 1, 2, 3}, // 16
+        {5, 14, 10, 9, 1, 2, 3}, // 17
+        {5, 14, 9, 1, 2, 3}, // 18
+        {5, 14, 1, 2, 3}, // 19
+        {5, 14, 2, 3}, // 20
+        {5, 14, 3}, // 21
+        {5, 14}, // 22
+        {14}, // 23
+        {} // 24 (frame vazio para encerrar a animação)
+    };
+
+    // Array contendo os tamanhos de cada frame
+    uint8_t sizes[] = {
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+    };
+
+    // Frequências das notas musicais na 5ª oitava (incluindo sustenidos)
+    int notas[12] = {
+        523, // C (Dó)
+        554, // C# (Dó sustenido)
+        587, // D (Ré)
+        622, // D# (Ré sustenido)
+        659, // E (Mi)
+        698, // F (Fá)
+        740, // F# (Fá sustenido)
+        784, // G (Sol)
+        831, // G# (Sol sustenido)
+        880, // A (Lá)
+        932, // A# (Lá sustenido)
+        987  // B (Si)
+    };
+
+    // Loop que percorre cada frame da animação
+    for (int i = 0; i < 24; ++i) {
+        // Exibe o frame atual na fita de LEDs
+        show_frame(sizes[i], frames[i], white);
+
+        // Emite um som correspondente ao tamanho do frame
+        // O índice do array 'notas' é garantido a estar dentro dos limites devido à estrutura de 'sizes'
+        emiteSom(100, notas[sizes[i]]);
+    }
+}
+
+
 // Animação de preenchimento
 void fillAnimation() {
     uint32_t led = urgb_u32(255, 255, 0); // Cor amarela para o LED "caindo"
@@ -455,9 +546,11 @@ int main() {
                     fillAnimation();
                     break;
                 case '6':
-                peixe();
-                break;
+                    peixe();
+                    break;
                 case '7':
+                    loading();
+                    break;
                 case '8':
                 case '9':
                     mostraImagemAleatoria();  // Mostra imagem aleatória
