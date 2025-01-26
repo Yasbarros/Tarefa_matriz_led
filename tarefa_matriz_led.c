@@ -486,6 +486,109 @@ char scan_keypad() {
     return 0;
 }
 
+// Função para gerar uma cor principal aleatória
+uint32_t random_color() {
+    uint8_t color_index = rand() % 7; // Gera um número de 0 a 6
+    switch (color_index) {
+        case 0: return urgb_u32(128, 0, 0);   // Vermelho
+        case 1: return urgb_u32(0, 128, 0);   // Verde
+        case 2: return urgb_u32(0, 0, 128);   // Azul
+        case 3: return urgb_u32(0, 128, 128); // Ciano
+        case 4: return urgb_u32(128, 0, 128); // Magenta
+        case 5: return urgb_u32(128, 128, 0); // Amarelo
+        case 6: return urgb_u32(128, 128, 128); // Branco
+    }
+    return urgb_u32(0, 0, 0); 
+}
+
+// Função para alerta visual e sonoro após o fim da contagem regressiva
+void alert() {
+    uint32_t frame[NLEDS] = {0};
+    frame[12] = urgb_u32(128, 0, 0);
+    setLEDS(frame);
+    sleep_ms(300);
+    int step2[] = {6, 7, 8, 11, 13, 16, 17, 18};
+    for (int i = 0; i < 8; i++) frame[step2[i]] = urgb_u32(128, 64, 0);
+    setLEDS(frame);
+    sleep_ms(300);
+    int step3[] = {0, 1, 2, 3, 4, 5, 9, 10, 14, 15, 19, 20, 21, 22, 23, 24};
+    for (int i = 0; i < 16; i++) frame[step3[i]] = urgb_u32(128, 128, 0);
+    setLEDS(frame);
+    sleep_ms(300);
+
+    int i = 5;
+    while (i--)
+    {
+        apagaLEDS();
+        sleep_ms(250);
+        acendeLEDS(random_color());
+        emiteSom(250, 100);
+    }
+}
+
+// Função para exibir uma contagem regressiva de 5 segundos
+void contagem_regressiva() {
+    uint32_t frames[][NLEDS] = {
+        {   // Dígito 0
+            1, 1, 1, 1, 1,
+            1, 0, 0, 0, 1,
+            1, 0, 0, 0, 1,
+            1, 0, 0, 0, 1,
+            1, 1, 1, 1, 1
+        },
+        {   // Dígito 1
+            0, 0, 1, 0, 0,
+            0, 0, 1, 0, 0,
+            0, 0, 1, 0, 0,
+            0, 0, 1, 0, 0,
+            0, 0, 1, 1, 0
+        },
+        {   // Dígito 2
+            1, 1, 1, 1, 1,
+            1, 0, 0, 0, 0,
+            1, 1, 1, 1, 1,
+            0, 0, 0, 0, 1,
+            1, 1, 1, 1, 1
+        },
+        {   // Dígito 3
+            1, 1, 1, 1, 1,
+            0, 0, 0, 0, 1,
+            1, 1, 1, 1, 0,
+            0, 0, 0, 0, 1,
+            1, 1, 1, 1, 1
+        },
+        {   // Dígito 4
+            1, 0, 0, 0, 0,
+            0, 0, 0, 0, 1,
+            1, 1, 1, 1, 1,
+            1, 0, 0, 0, 1,
+            1, 0, 0, 0, 1
+        },
+        {   // Dígito 5 
+            1, 1, 1, 1, 1,
+            0, 0, 0, 0, 1,
+            1, 1, 1, 1, 1,
+            1, 0, 0, 0, 0,
+            1, 1, 1, 1, 1
+        },
+    };
+
+    // Exibe cada frame do dígito 5 até 0 com uma cor principal e um som aleatório
+    for (size_t i = sizeof(frames) / sizeof(frames[0]) - 1; i + 1; i--)
+    {
+        uint32_t color = random_color();
+        for (size_t j = 0; j < NLEDS; j++) if(frames[i][j]) frames[i][j] = color;
+        setLEDS(frames[i]);
+        emiteSom(500, (rand() % 4000) + 100);
+        sleep_ms(500);
+    }
+    apagaLEDS();
+
+    alert();
+    
+    apagaLEDS();
+}
+
 int main() {
     stdio_init_all();
 
@@ -525,11 +628,10 @@ int main() {
                     sleep_ms(100);
                     reset_usb_boot(0, 0);  // Reinicia no modo bootloader
                     break;
-                case '0':  // Exemplo de som para animação
-                    mostraImagemAleatoria();
-                    emiteSom(500, 1000);  // Emite som de 500ms com 1000Hz
-                    break;
                 // Para as teclas de '0' a '9', mostra imagem 
+                case '0':
+                    contagem_regressiva();
+                    break;
                 case '1':
                    animacaoCobraExplosiva();
                    break;
