@@ -409,7 +409,7 @@ void show_frame(uint8_t size, const uint8_t frame[], uint32_t color) {
  * e emitindo sons correspondentes a notas musicais baseadas no tamanho do frame.
  */
 void loading() {
-    uint32_t white = urgb_u32(50, 50, 50); // Define uma cor branca de intensidade moderada para os LEDs
+    uint32_t white = urgb_u32(255, 255, 255); // Define uma cor branca de intensidade moderada para os LEDs
 
     // Array de frames, onde cada frame contém os índices dos LEDs a serem iluminados
     const uint8_t frames[][12] = {
