@@ -54,6 +54,7 @@ Este projeto implementa o controle de uma matriz de LEDs 5x5 utilizando o Raspbe
    - `0`: Mostrar um padrão aleatório nos LEDs e emitir um som.
    - `1`: Mostrar uma cobra se moviventando até o ultimo led e explodindo.
    - `3`: Mostrar uma flor crescendo e uma abelha pousando nela.
+   - `9`: Mostra os raios do Sol
 
 ## Configuração dos Pinos
 
