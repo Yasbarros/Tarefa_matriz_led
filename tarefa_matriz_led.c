@@ -258,6 +258,38 @@ void animacaoFlorCrescendo() {
     }
 }
 
+//integrante - yasmim
+void animacaoSol() {
+    uint32_t cor_centro = urgb_u32(255, 255, 0); 
+    uint32_t cor_raio = urgb_u32(255, 165, 0);   
+
+    const int raios[16] = {
+        1, 3, 5, 9, 15, 19, 21, 23, 20, 18, 16, 10, 4, 0, 2, 8
+    };
+
+    for (int ciclo = 0; ciclo < 8; ciclo++) {
+        
+        memset(fitaEd, 0, sizeof(fitaEd));
+
+        
+        fitaEd[12] = cor_centro;
+
+        
+        for (int i = 0; i < 16; i++) {
+            if (i % 2 == ciclo % 2) {
+                fitaEd[raios[i]] = cor_raio;
+            }
+        }
+
+        atualizaFita();
+        sleep_ms(300); 
+    }
+
+    
+    apagaLEDS();
+}
+
+
 // Animação do peixe
 void peixe() {
     uint32_t cor = urgb_u32(62, 125, 255); // Azul claro
@@ -697,7 +729,7 @@ int main() {
                     animacaoMario();
                     break;
                 case '9':
-                    mostraImagemAleatoria();  // Mostra imagem aleatória
+                    animacaoSol(); 
                     break;
                 default:
                     break;
